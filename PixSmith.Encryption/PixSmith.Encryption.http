@@ -1,0 +1,6 @@
+@PixSmith.Encryption_HostAddress = http://localhost:5043
+
+GET {{PixSmith.Encryption_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
