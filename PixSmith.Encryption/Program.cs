@@ -1,5 +1,7 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Authentication.Certificate;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
@@ -13,6 +15,41 @@ builder.Services.AddHttpsRedirection(options =>
     options.RedirectStatusCode = 307;
     options.HttpsPort = 44397;
 });
+
+builder.Services.AddAuthentication(
+        CertificateAuthenticationDefaults.AuthenticationScheme)
+    .AddCertificate(options =>
+    {
+        options.Events = new CertificateAuthenticationEvents
+        {
+            OnCertificateValidated = ctx =>
+            {
+                return Task.CompletedTask;
+            },
+
+            OnAuthenticationFailed = ctx =>
+            {
+                return Task.CompletedTask;
+            }
+        };
+    });
+
+builder.WebHost.ConfigureKestrel(o =>
+{
+    o.ConfigureHttpsDefaults(o =>
+        o.ClientCertificateMode = ClientCertificateMode.RequireCertificate);
+
+    o.ConfigureHttpsDefaults(opts =>
+    {
+        opts.ClientCertificateMode = ClientCertificateMode.RequireCertificate;
+        opts.ClientCertificateValidation = (cert, chain, policyErrors) =>
+        {
+            // Certificate validation logic here
+            return true;
+        };
+    });
+});
+
 
 var app = builder.Build();
 

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NSec.Cryptography;
 using System.Security.Cryptography;
@@ -5,6 +6,7 @@ using System.Text;
 
 namespace PixSmith.Encryption.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]/[action]")]
     public class EncryptionController : ControllerBase
